@@ -1,0 +1,80 @@
+PACKAGE = xwm
+SYSCONF = $(DESTDIR)@SYSCONF@
+MANDIR = $(DESTDIR)@MANDIR@
+ICONDIR = $(DESTDIR)@ICONDIR@
+VERSION ?= @VERSION@
+USE_NLS = @USE_NLS@
+
+all:
+	$(MAKE) -C src all
+	$(MAKE) -C po all
+
+install: all
+	$(MAKE) -C src install
+	$(MAKE) -C po install
+	$(MAKE) -C contrib install
+	install -d -m 0755 $(SYSCONF)
+	install -m 644 example.xwmrc $(SYSCONF)/system.xwmrc
+
+install-strip: all install-conf
+	$(MAKE) -C src install-strip
+	$(MAKE) -C po install-strip
+	$(MAKE) -C contrib install
+	install -d -m 0755 $(SYSCONF)
+	install -m 644 example.xwmrc $(SYSCONF)/system.xwmrc
+	install -d -m 0755 $(ICONDIR)
+
+uninstall:
+	$(MAKE) -C src uninstall
+	$(MAKE) -C po uninstall
+	$(MAKE) -C contrib uninstall
+	rm -f $(SYSCONF)/system.xwmrc
+
+tarball:
+	rm -f ../xwm-$(VERSION).tar.xz ;
+	rm -fr ../xwm-$(VERSION) ;
+	cp -r ../xwm ../xwm-$(VERSION) ;
+	(cd ../xwm-$(VERSION) && $(MAKE) distclean) ;
+	(cd .. && tar -cf xwm-$(VERSION).tar xwm-$(VERSION));
+	rm -fr ../xwm-$(VERSION) ;
+	(cd .. && xz xwm-$(VERSION).tar)
+
+clean:
+	(cd src && $(MAKE) clean)
+	(cd po && $(MAKE) clean)
+	rm -rf doc
+
+distclean: clean
+	rm -f *[~#] config.cache config.log config.status config.h
+	rm -fr autom4te.cache
+	rm -f Makefile.bak src/Makefile.bak
+
+check-gettext:
+	@if test x$(USE_NLS) != "xyes" ; then \
+		echo "Missing gettext. Rerun configure and check for" \
+			"'checking whether to use NLS... yes'!" ; exit 1 ; fi
+
+update-po: check-gettext
+	@find src/ -name "*.c" -print | sort > po/POTFILES.in.2 ; \
+	if diff po/POTFILES.in po/POTFILES.in.2 >/dev/null 2>&1 ; then \
+	   rm -f po/POTFILES.in.2 ; \
+	else \
+	   mv po/POTFILES.in.2 po/POTFILES.in ; \
+	fi
+	cd po && $(MAKE) $(AM_MAKEFLAGS) update-po
+
+update-gmo: check-gettext
+	cd po && $(MAKE) $(AM_MAKEFLAGS) update-gmo
+
+force-update-gmo: check-gettext
+	touch po/*.po
+	cd po && $(MAKE) $(AM_MAKEFLAGS) update-gmo
+
+force-update-gmo-%: check-gettext
+	@language=`echo $@ | sed s/force-update-gmo-//` ; \
+	if test ! -f po/$$language.po ; then \
+		echo "file po/$$language.po does not exist" ; exit 1 ; fi ; \
+	touch po/$$language.po ; \
+	cd po && $(MAKE) $(AM_MAKEFLAGS) update-gmo
+
+.PHONY: check-gettext update-po update-gmo force-update-gmo

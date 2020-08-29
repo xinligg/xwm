@@ -1,0 +1,14 @@
+ICONDIR = $(DESTDIR)@DATADIR@/pixmaps
+
+ICONS = xwm.png
+
+install:
+	install -d $(ICONDIR)
+	for f in $(ICONS) ; do \
+		install -m 0644 $$f $(ICONDIR)/$$f ; \
+	done
+
+uninstall:
+	for f in $(ICONS) ; do \
+		rm -f $(ICONDIR)/$$f ; \
+	done
