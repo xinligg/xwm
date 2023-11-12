@@ -2,7 +2,7 @@
 # XWM autoconf.
 ############################################################################
 
-AC_INIT(wwm, 1.0.0, xinligg@gmail.com)
+AC_INIT(xwm, 1.0.0, xinligg@gmail.com)
 AC_PREREQ(2.60)
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_SRCDIR([po])
