@@ -1,0 +1,13 @@
+Makefile*
+ABOUT-NLS
+xwm
+
+*.lo
+*.o
+*.a
+*.la
+*.lai
+*.so
+*.so.*
+*.dylib
+
