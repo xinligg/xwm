@@ -175,6 +175,7 @@
    <Key mask="A" key="F2">exec:fbrun</Key>
    <Key mask="A" key="z">exec:firefox</Key>
    <Key mask="C" key="l">exec:xtrlock -b</Key>
+   <Key mask="CA" key="t">exec:x-terminal-emulator</Key>
    <Key mask="A" key="F3">maximize</Key>
    <Key mask="A" key="F5">minimize</Key>
    <Key mask="A" key="r">restart</Key>
